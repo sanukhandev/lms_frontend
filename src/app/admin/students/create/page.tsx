@@ -8,14 +8,14 @@ import Input from "@/components/form/input/InputField";
 import Button from "@/components/ui/button/Button";
 import { api } from "@/util/api";
 
-export default function CreateInstructorPage() {
+export default function CreateStudentPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
-    secondary_phone: "",
+    secondry_phone: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,12 +26,12 @@ export default function CreateInstructorPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post("/instructors", form);
-      alert("Instructor created successfully!");
-      router.push("/admin/instructors"); // Redirect to instructor list page
+      await api.post("/students", form);
+      alert("Student created successfully!");
+      router.push("/admin/students");
     } catch (err: any) {
       console.error(err);
-      alert(err?.response?.data?.message || "Failed to create instructor.");
+      alert(err?.response?.data?.message || "Failed to create student.");
     } finally {
       setLoading(false);
     }
@@ -40,9 +40,9 @@ export default function CreateInstructorPage() {
   return (
     <div className="p-6">
       <ComponentCard
-        title="Create New Instructor"
-        buttonText="Back to Instructors"
-        buttonLink="/admin/instructors"
+        title="Create New Student"
+        buttonText="Back to Students"
+        buttonLink="/admin/students"
       >
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name */}
@@ -51,7 +51,7 @@ export default function CreateInstructorPage() {
             <Input
               type="text"
               name="name"
-              placeholder="Instructor name"
+              placeholder="Student name"
               value={form.name}
               onChange={handleChange}
             />
@@ -63,7 +63,7 @@ export default function CreateInstructorPage() {
             <Input
               type="email"
               name="email"
-              placeholder="Instructor email"
+              placeholder="Student email"
               value={form.email}
               onChange={handleChange}
             />
@@ -75,7 +75,7 @@ export default function CreateInstructorPage() {
             <Input
               type="text"
               name="phone"
-              placeholder="Primary phone number"
+              placeholder="Phone number"
               value={form.phone}
               onChange={handleChange}
             />
@@ -88,18 +88,16 @@ export default function CreateInstructorPage() {
               type="text"
               name="secondary_phone"
               placeholder="Secondary phone number"
-              value={form.secondary_phone}
+              value={form.secondry_phone}
               onChange={handleChange}
             />
           </div>
 
-          {/* Password */}
-          
 
           {/* Submit Button */}
           <div>
             <Button className="w-full" type="submit" size="sm" disabled={loading}>
-              {loading ? "Creating..." : "Create Instructor"}
+              {loading ? "Creating..." : "Create Student"}
             </Button>
           </div>
         </form>
