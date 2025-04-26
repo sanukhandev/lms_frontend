@@ -23,8 +23,8 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen xl:flex">
-      {/* <AdminSideBar /> */}
-      <AppSidebar />
+      <AdminSideBar />
+      {/* <AppSidebar /> */}
       <Backdrop />
       <div
         className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}

@@ -1,18 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ComponentCard from "@/components/common/ComponentCard";
 import Label from "@/components/form/Label";
 import Input from "@/components/form/input/InputField";
 import Select from "@/components/form/Select";
 import Button from "@/components/ui/button/Button";
-import DatePicker from "@/components/form/date-picker";
 import { api } from "@/util/api";
 
 export default function CreateCoursePage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [instructors, setInstructors] = useState<{ value: string; label: string }[]>([]);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -31,10 +31,10 @@ export default function CreateCoursePage() {
     try {
       await api.post("/courses", {
         ...form,
-        syllabus: [], // currently static, you can expand later
+        syllabus: [], // you can add dynamic syllabus later
       });
       alert("Course created successfully!");
-      router.push("/admin/courses"); // Redirect to course list page
+      router.push("/admin/courses");
     } catch (err: any) {
       console.error(err);
       alert(err?.response?.data?.message || "Failed to create course.");
@@ -42,6 +42,23 @@ export default function CreateCoursePage() {
       setLoading(false);
     }
   };
+
+  const fetchInstructors = async () => {
+    try {
+      const res = await api.get("/instructors"); // 🔥 Adjust the API path if needed
+      const instructorOptions = res.data.data.map((instructor: any) => ({
+        value: instructor.id.toString(),
+        label: instructor.name,
+      }));
+      setInstructors(instructorOptions);
+    } catch (err) {
+      console.error("Failed to fetch instructors", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchInstructors();
+  }, []);
 
   return (
     <div className="p-6">
@@ -71,16 +88,12 @@ export default function CreateCoursePage() {
             />
           </div>
 
-          {/* Instructor Select (Optional) */}
+          {/* Instructor Select */}
           <div>
             <Label>Instructor</Label>
             <Select
               placeholder="Select an instructor"
-              options={[
-                { value: "1", label: "John Doe" },
-                { value: "2", label: "Jane Smith" },
-                { value: "3", label: "Another Instructor" },
-              ]}
+              options={instructors}
               onChange={(value) => setForm({ ...form, instructor_id: value })}
             />
           </div>
@@ -97,8 +110,6 @@ export default function CreateCoursePage() {
               min="1"
             />
           </div>
-
-          {/* Future: Add syllabus inputs dynamically if needed */}
 
           {/* Submit Button */}
           <div>

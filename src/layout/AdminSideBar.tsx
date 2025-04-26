@@ -33,10 +33,16 @@ const navItems: NavItem[] = [
   },
   {
     icon: <CalenderIcon />,
+    name: "Instructors",
+    subItems: [{ name: "Instructors", path: "/admin/instructors", pro: false },{ name: "Add Instructor", path: "/admin/instructors/create", pro: false }],
+  },
+  {
+    icon: <CalenderIcon />,
       name: "Courses",
-    subItems: [{ name: "Courses", path: "admin/courses", pro: false },{ name: "Add Course", path: "/create-course", pro: false }],
+    subItems: [{ name: "Courses", path: "/admin/courses", pro: false },{ name: "Add Course", path: "/admin/courses/create", pro: false }],
     
-  }
+  },
+  
   
 ];
 
