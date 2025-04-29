@@ -214,7 +214,7 @@ export default function ClassSessionManager() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         {session.meeting_link ? (
                           <a
-                            href={session.meeting_link}
+                            href={"class-sessions/"+session.id+"/meeting"}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-500 underline"
