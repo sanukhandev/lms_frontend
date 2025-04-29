@@ -3,7 +3,6 @@
 import { useSidebar } from "@/context/SidebarContext";
 import AdminSideBar from "@/layout/AdminSideBar";
 import AppHeader from "@/layout/AppHeader";
-import AppSidebar from "@/layout/AppSidebar";
 import Backdrop from "@/layout/Backdrop";
 import React from "react";
 

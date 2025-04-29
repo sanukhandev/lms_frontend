@@ -29,9 +29,8 @@ export default function CreateStudentPage() {
       await api.post("/students", form);
       alert("Student created successfully!");
       router.push("/admin/students");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      alert(err?.response?.data?.message || "Failed to create student.");
     } finally {
       setLoading(false);
     }

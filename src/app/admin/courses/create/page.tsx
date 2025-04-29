@@ -35,9 +35,8 @@ export default function CreateCoursePage() {
       });
       alert("Course created successfully!");
       router.push("/admin/courses");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      alert(err?.response?.data?.message || "Failed to create course.");
     } finally {
       setLoading(false);
     }
@@ -46,7 +45,7 @@ export default function CreateCoursePage() {
   const fetchInstructors = async () => {
     try {
       const res = await api.get("/instructors"); // 🔥 Adjust the API path if needed
-      const instructorOptions = res.data.data.map((instructor: any) => ({
+      const instructorOptions = res.data.data.map((instructor: { id: number; name: string }) => ({
         value: instructor.id.toString(),
         label: instructor.name,
       }));

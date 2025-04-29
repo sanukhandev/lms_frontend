@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import ComponentCard from "@/components/common/ComponentCard";
-import BasicTableOne from "@/components/tables/BasicTableOne";
 import { api } from "@/util/api";
 import CourseTable from "@/components/tables/CourseTable";
 
@@ -33,7 +32,7 @@ export default function Courses() {
     try {
       const response = await api.get("/courses");
       setCourses(response.data.data || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       setError("Failed to load courses");
     } finally {

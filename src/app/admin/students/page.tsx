@@ -27,7 +27,7 @@ export default function Students() {
     try {
       const response = await api.get("/students");
       setStudents(response.data.data || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       setError("Failed to load students");
     } finally {

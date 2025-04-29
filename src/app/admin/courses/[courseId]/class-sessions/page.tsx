@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import ComponentCard from "@/components/common/ComponentCard";
 import Label from "@/components/form/Label";
 import Input from "@/components/form/input/InputField";
@@ -20,13 +20,21 @@ type ClassSession = {
 
 export default function ClassSessionManager() {
   const params = useParams();
-  const router = useRouter();
   const courseId = params.courseId as string;
 
   const [sessions, setSessions] = useState<ClassSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [course, setCourse] = useState<any>(null);
+  type Course = {
+    id: number;
+    title: string;
+    description: string;
+    instructor: {
+      name: string;
+    };
+  };
+  
+  const [course, setCourse] = useState<Course | null>(null);
   const [form, setForm] = useState({
     start_date: "",
     days_of_week: [] as string[],
@@ -92,9 +100,8 @@ export default function ClassSessionManager() {
       });
       alert("Class sessions generated successfully!");
       fetchSessions();
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      alert(err?.response?.data?.message || "Failed to generate sessions");
     } finally {
       setLoading(false);
     }

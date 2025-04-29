@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 declare global {
   interface Window {
-    JitsiMeetExternalAPI?: any;
+    JitsiMeetExternalAPI?: new (domain: string, options: unknown) => void;
   }
 }
 
@@ -19,7 +19,7 @@ export default function JitsiMeet({ roomName, displayName }: JitsiMeetProps) {
   useEffect(() => {
     // Load the external script
     const loadJitsiScript = () => {
-      let script = document.createElement('script');
+      const script = document.createElement('script');
       script.src = 'https://meet.jit.si/external_api.js';
       script.async = true;
       script.onload = initializeJitsi;
@@ -56,7 +56,6 @@ export default function JitsiMeet({ roomName, displayName }: JitsiMeetProps) {
         },
       };
 
-      // @ts-ignore
       new window.JitsiMeetExternalAPI(domain, options);
     };
 

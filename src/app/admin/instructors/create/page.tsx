@@ -29,9 +29,8 @@ export default function CreateInstructorPage() {
       await api.post("/instructors", form);
       alert("Instructor created successfully!");
       router.push("/admin/instructors"); // Redirect to instructor list page
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
-      alert(err?.response?.data?.message || "Failed to create instructor.");
     } finally {
       setLoading(false);
     }

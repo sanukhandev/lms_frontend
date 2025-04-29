@@ -7,7 +7,6 @@ import { api } from "@/util/api";
 
 export default function ClassPage() {
   const params = useParams();
-  const courseId = params.courseId as string;
   const sessionId = params.sessionId as string;
 
   const [sessionInfo, setSessionInfo] = useState<{
@@ -20,7 +19,7 @@ export default function ClassPage() {
   useEffect(() => {
     
     fetchSessionInfo();
-  }, [sessionId]);
+  }, [ sessionInfo]);
 async function fetchSessionInfo() {
       try {
         const response = await api.get(

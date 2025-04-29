@@ -27,7 +27,7 @@ export default function Instructors() {
     try {
       const response = await api.get("/instructors");
       setInstructors(response.data.data || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       setError("Failed to load instructors");
     } finally {
