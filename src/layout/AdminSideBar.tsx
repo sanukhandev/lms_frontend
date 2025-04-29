@@ -5,17 +5,10 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSidebar } from "../context/SidebarContext";
 import {
-  BoxCubeIcon,
   CalenderIcon,
   ChevronDownIcon,
   GridIcon,
   HorizontaLDots,
-  ListIcon,
-  PageIcon,
-  PieChartIcon,
-  PlugInIcon,
-  TableIcon,
-  UserCircleIcon,
 } from "../icons/index";
 
 type NavItem = {
@@ -33,10 +26,32 @@ const navItems: NavItem[] = [
   },
   {
     icon: <CalenderIcon />,
+    name: "Instructors",
+    subItems: [{ name: "Instructors", path: "/admin/instructors", pro: false },{ name: "Add Instructor", path: "/admin/instructors/create", pro: false }],
+  },
+  {
+    icon: <CalenderIcon />,
       name: "Courses",
-    subItems: [{ name: "Courses", path: "admin/courses", pro: false },{ name: "Add Course", path: "/create-course", pro: false }],
+    subItems: [{ name: "Courses", path: "/admin/courses", pro: false },{ name: "Add Course", path: "/admin/courses/create", pro: false },{ name: "Categories", path: "/admin/courses/categories", pro: false }],
     
-  }
+  },
+
+  {
+    icon: <CalenderIcon />,
+    name: "Students",
+    subItems: [{ name: "Students", path: "/admin/students", pro: false },{ name: "Add Student", path: "/admin/students/create", pro: false }],
+  },
+  {
+    icon: <CalenderIcon />,
+    name: "Settings",
+    subItems: [{ name: "Settings", path: "/admin/settings", pro: false }],
+  },
+  {
+    icon: <CalenderIcon />,
+    name: "Reports",
+    subItems: [{ name: "Reports", path: "/admin/reports", pro: false }],
+  },
+  
   
 ];
 

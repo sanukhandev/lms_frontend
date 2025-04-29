@@ -41,9 +41,15 @@ export default function SignInForm() {
           : "/student";
 
       router.push(rolePath);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError(
-        err?.response?.data?.message || "Login failed. Please try again."
+        (err as {
+        response?: {
+          data?: {
+            message?: string;
+          };
+        };
+        })?.response?.data?.message || "Login failed. Please try again."
       );
     } finally {
       setLoading(false);

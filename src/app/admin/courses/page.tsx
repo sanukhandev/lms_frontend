@@ -2,9 +2,8 @@
 
 import { useEffect, useState } from "react";
 import ComponentCard from "@/components/common/ComponentCard";
-import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import BasicTableOne from "@/components/tables/BasicTableOne";
 import { api } from "@/util/api";
+import CourseTable from "@/components/tables/CourseTable";
 
 
 
@@ -33,7 +32,7 @@ export default function Courses() {
     try {
       const response = await api.get("/courses");
       setCourses(response.data.data || []);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       setError("Failed to load courses");
     } finally {
@@ -49,7 +48,7 @@ export default function Courses() {
         <ComponentCard
           title="Courses Table"
           buttonText="Add Course"
-          buttonLink="/admin/course/create"
+          buttonLink="/admin/courses  /create"
           className="mb-6"
         >
           {loading ? (
@@ -57,7 +56,7 @@ export default function Courses() {
           ) : error ? (
             <p className="text-red-500">{error}</p>
           ) : (
-            <BasicTableOne items={courses} />
+                <CourseTable items={courses} />
           )}
         </ComponentCard>
       </div>
