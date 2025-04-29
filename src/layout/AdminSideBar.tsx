@@ -32,7 +32,7 @@ const navItems: NavItem[] = [
   {
     icon: <CalenderIcon />,
       name: "Courses",
-    subItems: [{ name: "Courses", path: "/admin/courses", pro: false },{ name: "Add Course", path: "/admin/courses/create", pro: false },{ name: "Categories", path: "/admin/courses/categories", pro: false }],
+    subItems: [{ name: "Courses", path: "/admin/courses", pro: false },{ name: "Add Course", path: "/admin/courses/create", pro: false }],
     
   },
 
@@ -41,16 +41,7 @@ const navItems: NavItem[] = [
     name: "Students",
     subItems: [{ name: "Students", path: "/admin/students", pro: false },{ name: "Add Student", path: "/admin/students/create", pro: false }],
   },
-  {
-    icon: <CalenderIcon />,
-    name: "Settings",
-    subItems: [{ name: "Settings", path: "/admin/settings", pro: false }],
-  },
-  {
-    icon: <CalenderIcon />,
-    name: "Reports",
-    subItems: [{ name: "Reports", path: "/admin/reports", pro: false }],
-  },
+  
   
   
 ];
