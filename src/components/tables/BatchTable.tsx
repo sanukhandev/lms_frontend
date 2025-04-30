@@ -8,68 +8,65 @@ import {
 } from "../ui/table";
 import Link from "next/link";
 
-type Course = {
+type Batch = {
   id: number;
-  title: string;
-  description: string;
-  instructor?: {
-    id: number;
-    name: string;
-  };
-  syllabus?: string[];
-  duration_weeks: number;
+  course_id: number;
+  name: string;
+  start_date: string;
+  end_date: string;
+  session_days: string[];
+  session_start_time: string;
+  session_end_time: string;
 };
 
-interface CourseTableProps {
-  items: Course[];
+interface BatchTableProps {
+  items: Batch[];
 }
 
-export default function CourseTable({ items }: CourseTableProps) {
+export default function BatchTable({ items }: BatchTableProps) {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
-        <div className="min-w-[800px]">
+        <div className="min-w-[900px]">
           <Table>
             {/* Table Header */}
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-                 <TableCell
+                <TableCell
                   isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  className="px-5 py-3 text-start text-gray-500 font-medium text-theme-xs dark:text-gray-400"
                 >
-                  Course ID
+                  Batch ID
                 </TableCell>
                 <TableCell
                   isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  className="px-5 py-3 text-start text-gray-500 font-medium text-theme-xs dark:text-gray-400"
                 >
-                  Title
+                  Name
                 </TableCell>
                 <TableCell
                   isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  className="px-5 py-3 text-start text-gray-500 font-medium text-theme-xs dark:text-gray-400"
                 >
-                  Instructor
+                  Start Date
                 </TableCell>
                 <TableCell
                   isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  className="px-5 py-3 text-start text-gray-500 font-medium text-theme-xs dark:text-gray-400"
                 >
-                  Duration (weeks)
+                  End Date
                 </TableCell>
                 <TableCell
                   isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  className="px-5 py-3 text-start text-gray-500 font-medium text-theme-xs dark:text-gray-400"
                 >
-                  Description
+                  Days
                 </TableCell>
-
                 <TableCell
                   isHeader
-                
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  className="px-5 py-3 text-start text-gray-500 font-medium text-theme-xs dark:text-gray-400"
                 >
-                  Batches
+                  Time
                 </TableCell>
               </TableRow>
             </TableHeader>
@@ -77,39 +74,37 @@ export default function CourseTable({ items }: CourseTableProps) {
             {/* Table Body */}
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
               {items.length > 0 ? (
-                items.map((course) => (
-                  <TableRow key={course.id}>
+                items.map((batch) => (
+                  <TableRow key={batch.id}>
                     <TableCell className="px-5 py-4 text-start font-medium text-gray-800 dark:text-white/90">
-                      {course.id}
+                      {batch.id}
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start font-medium text-gray-800 dark:text-white/90">
-                      {course.title}
+                      <Link
+                        href={`/admin/courses/${batch.course_id}/batches/${batch.id}`}
+                        className="text-blue-500 hover:underline"
+                      >
+                        {batch.name}
+                      </Link>
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
-                      {course.instructor?.name.toLocaleUpperCase() || "N/A"}
+                      {batch.start_date}
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
-                      {course.duration_weeks} weeks
+                      {batch.end_date}
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
-                      {course.description ? course.description.slice(0, 60) + "..." : "No description"}
+                      {batch.session_days.join(", ")}
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
-                      {/* {create button for creating batches page} */}
-                    <Link href={`/admin/courses/${course.id}/batches`}>
-                      <button className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-                        View Batches
-                      </button>
-                    </Link>
+                      {batch.session_start_time} - {batch.session_end_time}
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell
-                    className="py-6 text-center text-gray-500 dark:text-gray-400"
-                  >
-                    No courses found.
+                  <TableCell className="py-6 text-center text-gray-500 dark:text-gray-400">
+                    No batches found.
                   </TableCell>
                 </TableRow>
               )}
