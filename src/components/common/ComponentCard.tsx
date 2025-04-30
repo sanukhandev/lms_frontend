@@ -10,6 +10,7 @@ interface ComponentCardProps {
   desc?: string;
   buttonText?: string; // Optional button label
   buttonLink?: string; // Optional URL to redirect
+  onModalOpen?: () => void; // Optional function to open modal
 }
 
 const ComponentCard: React.FC<ComponentCardProps> = ({
@@ -19,6 +20,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
   desc = "",
   buttonText,
   buttonLink,
+  onModalOpen,
 }) => {
   return (
     <div
@@ -37,13 +39,17 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
           )}
         </div>
         {buttonText && buttonLink && (
-          <Link
-            href={buttonLink}
-            className="" >
-             <Button size="md" variant="primary" startIcon={<BoxIcon />}>
+          <Link href={buttonLink} className="">
+            <Button size="md" variant="primary" startIcon={<BoxIcon />}>
               {buttonText}
             </Button>
           </Link>
+        )}
+        {/* Button for opening modal if onModalOpen is provided */}
+        {buttonText && !buttonLink && onModalOpen && (
+          <Button size="md" variant="primary" onClick={onModalOpen}>
+            {buttonText}
+          </Button>
         )}
       </div>
 
