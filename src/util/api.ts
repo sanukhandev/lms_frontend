@@ -27,6 +27,11 @@ if (isBrowser) {
 // --------- Token Storage ---------
 
 export const setAuthToken = (token: string) => {
+  if (isBrowser) {
+  console.log("Storing test token...");
+  localStorage.setItem("testKey", "testValue");
+  console.log("Retrieved:", localStorage.getItem("testKey"));
+}
   if (isBrowser) localStorage.setItem("authToken", token);
 };
 
