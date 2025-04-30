@@ -13,7 +13,7 @@ export const api = axios.create({
   },
 });
 
-// Add token to each request (client-side only)
+// Add token on request (client-side only)
 if (isBrowser) {
   api.interceptors.request.use((config) => {
     const token = localStorage.getItem('authToken');
