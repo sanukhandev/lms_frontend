@@ -3,11 +3,12 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import Checkbox from "@/components/form/input/Checkbox";
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
+import { EyeCloseIcon, EyeIcon } from "@/icons";
 import { api, setAuthToken, setUserData, setUserRole, getUserRole } from "@/util/api";
 
 export default function SignInForm() {
@@ -46,7 +47,7 @@ export default function SignInForm() {
       const rolePath =
         user.role === "admin" ? "/admin" :
         user.role === "instructor" ? "/instructor" : "/student";
-
+      setLoading(false);
       router.push(rolePath);
     } catch (err: unknown) {
       const message = (err as {
@@ -65,8 +66,13 @@ export default function SignInForm() {
           href="/"
           className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
         >
-          <ChevronLeftIcon />
-          Back to dashboard
+         <Image
+                            height={70}
+                            width={250}
+                            className=""
+                            src="/images/logo/logo.svg"
+                            alt="Logo"
+                          />
         </Link>
       </div>
 
