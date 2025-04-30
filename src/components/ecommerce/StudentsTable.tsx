@@ -13,7 +13,7 @@ interface Student {
   id: number;
   name: string;
   email: string;
-  status?: "Active" | "Inactive" | null;
+  status?: "active" | "inactive" | null;
   created_at: string;
 }
 
@@ -98,7 +98,7 @@ export default function StudentTable({ students }: StudentTableProps) {
                   {student.email}
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  <Badge size="sm">{student.status || "N/A"}</Badge>
+                  <Badge color={student.status === "active" ? "success" : "error"} size="sm">{student.status?.toLocaleUpperCase() || "N/A"}</Badge>
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
                   {new Date(student.created_at).toLocaleDateString()}

@@ -7,6 +7,9 @@ import ComponentCard from "@/components/common/ComponentCard";
 import Link from "next/link";
 import StudentTable from "@/components/ecommerce/StudentsTable";
 import BatchInfoCard from "@/components/user-profile/BatchCardInfo";
+import Button from "@/components/ui/button/Button";
+import { Modal } from "@/components/ui/modal";
+import MultiSelect from "@/components/form/MultiSelect";
 
 interface Student {
   id: number;
@@ -40,8 +43,11 @@ interface Batch {
 export default function BatchDetailsPage() {
   const { batchId } = useParams();
   const [batch, setBatch] = useState<Batch | null>(null);
+  const [availableStudents, setAvailableStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
+  const [error, setError] = useState("");
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [studentsToAdd, setStudentsToAdd] = useState<Student[]>([]);
 
   useEffect(() => {
     if (batchId) fetchBatchById();
@@ -49,13 +55,51 @@ export default function BatchDetailsPage() {
 
   const fetchBatchById = async () => {
     try {
-      const response = await api.get(`/batches/${batchId}`);
-      setBatch(response.data.data);
+      const batchResponse = await api.get(`/batches/${batchId}`);
+      setBatch(batchResponse.data.data);
+
+      // Fetch all students
+      const studentsResponse = await api.get("/students");
+      console.log("Students Response:", studentsResponse); // Log the response for debugging
+
+      const studentsInBatchIds = batchResponse.data.data.students.map(
+        (student: Student) => student.id
+      );
+      if (Array.isArray(studentsResponse.data.data)) {
+        const unassignedStudents = studentsResponse.data.data.filter(
+          (student: Student) => !studentsInBatchIds.includes(student.id)
+        );
+        setAvailableStudents(unassignedStudents); // Set available students
+      } else {
+        setError("Invalid students data structure.");
+      }
     } catch (err) {
       console.error(err);
       setError("Failed to load batch data");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  const handleAddStudents = async () => {
+    try {
+      const selectedStudentIds = studentsToAdd.map((student) => student.id);
+      await api.put(`/batches/${batch?.id}/students`, {
+        student_ids: selectedStudentIds,
+      });
+      fetchBatchById(); // Re-fetch the batch data after adding students
+      setModalOpen(false); // Close the modal
+    } catch (err) {
+      console.error("Error adding students:", err);
+      setError("Failed to add students.");
     }
   };
 
@@ -71,7 +115,7 @@ export default function BatchDetailsPage() {
       <ComponentCard
         title="Students"
         buttonText="Add Student"
-        buttonLink={`/admin/batches/${batch.id}/add-student`}
+        onModalOpen={handleOpenModal} // Trigger modal open
       >
         {batch.students.length > 0 ? (
           <StudentTable students={batch.students} />
@@ -80,6 +124,46 @@ export default function BatchDetailsPage() {
         )}
       </ComponentCard>
 
+      {/* Add Students Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        className="max-w-3xl m-4"
+      >
+        <div className="w-full overflow-y-auto rounded-3xl bg-white dark:bg-gray-900 p-6 lg:p-10">
+          <h4 className="text-2xl font-semibold text-gray-800 dark:text-white/90 mb-6">
+            Add Students to Batch
+          </h4>
+
+          <div className="mb-6">
+            <MultiSelect
+              label="Select Students"
+              options={availableStudents.map((student) => ({
+                value: student.id.toString(),
+                text: `${student.name} (${student.email})`,
+                selected: false,
+              }))}
+              onChange={(selectedIds) => {
+                const selectedStudents = availableStudents.filter((student) =>
+                  selectedIds.includes(student.id.toString())
+                );
+                setStudentsToAdd(selectedStudents);
+              }}
+            />
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={handleCloseModal} size="sm">
+              Cancel
+            </Button>
+            <Button onClick={handleAddStudents} size="sm">
+              Add Students
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Class Sessions Table */}
       <ComponentCard title="Class Sessions">
         <table className="w-full text-sm">
           <thead>
