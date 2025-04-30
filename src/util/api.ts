@@ -1,22 +1,22 @@
-import axios from 'axios';
-import { secureDecode, secureEncode } from './secureEncode';
+import axios from "axios";
+import { secureEncode, secureDecode } from "./secureEncode";
 
-// Helper to check if running in browser
-const isBrowser = typeof window !== 'undefined';
+// Check if window is available (SSR-safe)
+const isBrowser = typeof window !== "undefined";
 
-// Axios instance
+// Create Axios instance
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1',
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api/v1",
   headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
+    "Content-Type": "application/json",
+    Accept: "application/json",
   },
 });
 
-// Add token on request (client-side only)
+// Attach Authorization header if token is available (only in browser)
 if (isBrowser) {
   api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem("authToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -24,48 +24,56 @@ if (isBrowser) {
   });
 }
 
-// --------- Auth Token Functions ---------
+// --------- Token Storage ---------
 
 export const setAuthToken = (token: string) => {
-  if (!isBrowser) return;
-  localStorage.setItem('authToken', token);
+  if (isBrowser) localStorage.setItem("authToken", token);
 };
 
-export const getAuthToken = () => {
-  if (!isBrowser) return '';
-  return localStorage.getItem('authToken') || '';
+export const getAuthToken = (): string => {
+  return isBrowser ? localStorage.getItem("authToken") || "" : "";
 };
 
-// --------- User Role Functions ---------
+// --------- Role Storage ---------
 
 export const setUserRole = (role: string) => {
-  if (!isBrowser) return;
-  const encoded = secureEncode(role);
-  localStorage.setItem('userRoleToken', encoded);
+  if (isBrowser) {
+    const encoded = secureEncode(role);
+    localStorage.setItem("userRoleToken", encoded);
+  }
 };
 
-export const getUserRole = () => {
+export const getUserRole = (): string | null => {
   if (!isBrowser) return null;
-  const encoded = localStorage.getItem('userRoleToken');
+  const encoded = localStorage.getItem("userRoleToken");
   return encoded ? secureDecode(encoded) : null;
 };
 
-// --------- User Data Functions ---------
+// --------- User Data Storage ---------
 
 export const setUserData = (user: object) => {
-  if (!isBrowser) return;
-  localStorage.setItem('userData', btoa(JSON.stringify(user)));
+  if (isBrowser) {
+    const encoded = btoa(JSON.stringify(user));
+    localStorage.setItem("userData", encoded);
+  }
 };
 
-export const getUserData = () => {
+export const getUserData = (): Record<string, unknown> | null => {
   if (!isBrowser) return null;
-  const data = localStorage.getItem('userData');
-  return data ? JSON.parse(atob(data)) : null;
+  const encoded = localStorage.getItem("userData");
+  try {
+    return encoded ? JSON.parse(atob(encoded)) : null;
+  } catch {
+    return null;
+  }
 };
 
-// --------- Clear All Auth Data ---------
+// --------- Clear All ---------
 
 export const clearAuthData = () => {
-  if (!isBrowser) return;
-  localStorage.clear();
+  if (isBrowser) {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("userRoleToken");
+    localStorage.removeItem("userData");
+  }
 };

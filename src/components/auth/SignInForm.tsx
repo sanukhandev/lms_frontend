@@ -1,25 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Checkbox from "@/components/form/input/Checkbox";
-import Input from "@/components/form/input/InputField"; // Your custom input
+import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
-import { api, getUserRole, setAuthToken, setUserData, setUserRole } from "@/util/api";
-import { useAuthGuard } from "@/hooks/useAuthGuard";
+import { api, setAuthToken, setUserData, setUserRole, getUserRole } from "@/util/api";
 
 export default function SignInForm() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  useAuthGuard({ requireRole: getUserRole(), redirectIfAuthenticated: true });
+
+  // 🔐 Redirect if already authenticated (client-side check)
+  useEffect(() => {
+    const role = getUserRole();
+    if (role) {
+      const redirectPath =
+        role === "admin" ? "/admin" :
+        role === "instructor" ? "/instructor" : "/student";
+      router.replace(redirectPath);
+    }
+  }, [router]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -34,23 +44,15 @@ export default function SignInForm() {
       setUserRole(user.role);
 
       const rolePath =
-        user.role === "admin"
-          ? "/admin"
-          : user.role === "instructor"
-          ? "/instructor"
-          : "/student";
+        user.role === "admin" ? "/admin" :
+        user.role === "instructor" ? "/instructor" : "/student";
 
       router.push(rolePath);
     } catch (err: unknown) {
-      setError(
-        (err as {
-        response?: {
-          data?: {
-            message?: string;
-          };
-        };
-        })?.response?.data?.message || "Login failed. Please try again."
-      );
+      const message = (err as {
+        response?: { data?: { message?: string } }
+      })?.response?.data?.message || "Login failed. Please try again.";
+      setError(message);
     } finally {
       setLoading(false);
     }

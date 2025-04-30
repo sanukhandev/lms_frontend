@@ -9,27 +9,34 @@ type UseAuthGuardProps = {
   redirectIfAuthenticated?: boolean;
 };
 
-export const useAuthGuard = ({ requireRole, redirectIfAuthenticated = false }: UseAuthGuardProps) => {
+export const useAuthGuard = ({
+  requireRole = null,
+  redirectIfAuthenticated = false,
+}: UseAuthGuardProps) => {
   const router = useRouter();
 
   useEffect(() => {
     const token = getAuthToken();
     const role = getUserRole();
 
-    if (redirectIfAuthenticated && token && role) {
-      // User is logged in and should be redirected away from login/register
-      const redirectPath = role === "admin" ? "/admin"
-                        : role === "instructor" ? "/instructor"
-                        : "/student";
-      router.push(redirectPath);
+    if (!token || !role) {
+      if (!redirectIfAuthenticated) {
+        router.replace("/auth/signin");
+      }
       return;
     }
 
-    if (!redirectIfAuthenticated) {
-      // Route requires auth
-      if (!token || !role || (requireRole && role !== requireRole)) {
-        router.push("/login");
-      }
+    if (redirectIfAuthenticated) {
+      // Already authenticated, redirect to dashboard
+      const redirectPath =
+        role === "admin" ? "/admin" :
+        role === "instructor" ? "/instructor" :
+        "/student";
+
+      router.replace(redirectPath);
+    } else if (requireRole && role !== requireRole) {
+      // Authenticated but unauthorized
+      router.replace("/auth/signin");
     }
   }, [requireRole, redirectIfAuthenticated, router]);
 };
