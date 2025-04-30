@@ -45,7 +45,7 @@ export default function Batches() {
       <ComponentCard
         title="Course Batches"
         buttonText="Add Batch"
-        buttonLink={`/admin/batches/create?courseId=${courseId}`}
+        buttonLink={`batches/create`}
         className="mb-6"
       >
         {loading ? (
