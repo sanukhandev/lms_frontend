@@ -360,7 +360,7 @@ export default function BatchDetailsPage() {
                         : "bg-warning-100 text-warning-800"
                     } inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium`}
                   >
-                    {session.class_status.toUpperCase()}
+                    {session.class_status.replace("_", " ").toUpperCase()}
                   </span>
                 </td>
                 <td className="p-2">

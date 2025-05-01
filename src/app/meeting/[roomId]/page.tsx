@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams } from "next/navigation"; // Correct usage of useParams hook
 import JitsiMeetComponent from "@/components/common/JitsiMeetComponent";
-import { api, getUserData } from "@/util/api";
+import { api, getUserData, getUserRole } from "@/util/api";
 import Preloader from "@/components/common/Preloader";
+import { useRouter } from "next/navigation";
 
 // Define the UserData type
 interface UserData {
@@ -14,17 +15,45 @@ interface UserData {
 }
 
 const MeetingPage = () => {
-  const router = useParams();
-  const { roomId } = router;
-
+  const { roomId } = useParams(); // Correctly get roomId from URL params
+  const router = useRouter(); // Initialize the router for navigation
   // Ensure roomId is a string
   const room = Array.isArray(roomId) ? roomId[0] : roomId;
+
+  // handleOnStartMeeting
+  const handleOnStartMeeting = () => {
+    api.post(`session/${room}/status`, {
+      status: "in_progress",
+    });
+  };
+
+  const handleOnEndMeeting = () => {
+    api
+      .post(`session/${room}/status`, {
+        status: "completed",
+      })
+      .then(() => {
+        const role = getUserRole(); // Get the user role from the API
+        const redirectPath =
+          role === "admin"
+            ? "/admin"
+            : role === "instructor"
+            ? "/instructor"
+            : "/student";
+        // redirect to the dashboard after ending the meeting
+        router.push(redirectPath);
+      })
+      .catch((error) => {
+        console.error("Error ending meeting:", error);
+      });
+  };
 
   // Use the UserData type for userData state
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isValidStudent, setIsValidStudent] = useState<boolean>(false); // State to track if the student is valid
   const [sessionError, setSessionError] = useState<string>(""); // To store any session validation errors
   const [roomName, setRoomName] = useState<string>(""); // State to store the room name
+  const [isSessionValid, setIsSessionValid] = useState<boolean>(false); // State to track session validity
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -40,7 +69,7 @@ const MeetingPage = () => {
 
           // Check if the session is valid for the student
           const response = await api.get(
-            `/session/valid/${roomId}` // Fetch student session data using the student ID and room ID
+            `/session/valid/${room}` // Fetch student session data using the room ID
           );
 
           if (response.status === 200) {
@@ -48,16 +77,20 @@ const MeetingPage = () => {
             if (studentData && studentData.valid) {
               setRoomName(studentData.meeting_link); // Set the room name from the response
               setIsValidStudent(true);
+              setIsSessionValid(true); // Set session validity to true
             } else {
               setIsValidStudent(false);
               setSessionError("You are not authorized to join this session.");
+              setIsSessionValid(false); // Set session validity to false
             }
           } else {
             setIsValidStudent(false);
             setSessionError(response.data.message || "Session not found.");
+            setIsSessionValid(false); // Set session validity to false
           }
         } else {
           setUserData(null); // Set null if the data doesn't match the expected structure
+          setIsSessionValid(false); // Set session validity to false if user data is invalid
         }
       } catch (error: unknown) {
         setIsValidStudent(false);
@@ -68,15 +101,16 @@ const MeetingPage = () => {
         } else {
           setSessionError("An unknown error occurred.");
         }
+        setIsSessionValid(false); // Set session validity to false if there's an error
         console.error(error);
       }
     };
 
     fetchUserData();
-  }, [roomId]);
+  }, [room]); // Added `room` as a dependency
 
-  // Show preloader until user data is fetched
-  if (!userData) {
+  // Show preloader until session is validated (and user data is fetched)
+  if (!isSessionValid) {
     return <Preloader />;
   }
 
@@ -106,8 +140,8 @@ const MeetingPage = () => {
 
   // Create the user object from the fetched user data
   const user = {
-    name: `${userData.name} - ${userData.role}`,
-    email: userData.email,
+    name: `${userData?.name} - ${userData?.role}`,
+    email: userData?.email,
   };
 
   return (
@@ -115,6 +149,8 @@ const MeetingPage = () => {
       <div className="flex-1 flex items-center justify-center">
         {room && user && (
           <JitsiMeetComponent
+            onStartMeeting={handleOnStartMeeting}
+            onEndMeeting={handleOnEndMeeting}
             roomName={roomName}
             userName={user.name}
             userEmail={user?.email || ""}

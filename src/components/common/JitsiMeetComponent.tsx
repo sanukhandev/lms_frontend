@@ -6,12 +6,16 @@ interface JitsiMeetComponentProps {
   roomName: string;
     userName: string;
     userEmail: string;
+    onStartMeeting: () => void;
+    onEndMeeting: () => void;
 }
 
 const JitsiMeetComponent: React.FC<JitsiMeetComponentProps> = ({
   roomName,
     userName,
     userEmail,
+    onStartMeeting,
+    onEndMeeting,
 }) => {
   return (
     <div className="w-full h-full">
@@ -31,12 +35,14 @@ const JitsiMeetComponent: React.FC<JitsiMeetComponentProps> = ({
           displayName: userName,
           email: userEmail,
         }}
-        onApiReady={(externalApi) => {
-          // here you can handle the Jitsi Meet External API
-          console.log(externalApi);
+              onApiReady={() => {
+                  console.log("Jitsi API is ready Started meeting");
+                  onStartMeeting(); // Call the onStartMeeting function when the API is ready
+            
         }}
-        onReadyToClose={() => {
-          window.location.href = "/admin"; // Redirect to the home page when the meeting is closed
+              onReadyToClose={() => {
+                    console.log("Jitsi API is ready to close meeting");
+                    onEndMeeting(); // Call the onEndMeeting function when the API is ready to close
         }}
       />
     </div>
