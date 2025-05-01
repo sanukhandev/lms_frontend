@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState,useCallback } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -22,32 +22,36 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-     path: "/"
+    path: "/admin",
   },
   {
     icon: <CalenderIcon />,
     name: "Instructors",
-    subItems: [{ name: "Instructors", path: "/admin/instructors", pro: false },{ name: "Add Instructor", path: "/admin/instructors/create", pro: false }],
+    subItems: [
+      { name: "Instructors", path: "/admin/instructors", pro: false },
+      { name: "Add Instructor", path: "/admin/instructors/create", pro: false },
+    ],
   },
   {
     icon: <CalenderIcon />,
-      name: "Courses",
-    subItems: [{ name: "Courses", path: "/admin/courses", pro: false },{ name: "Add Course", path: "/admin/courses/create", pro: false }],
-    
+    name: "Courses",
+    subItems: [
+      { name: "Courses", path: "/admin/courses", pro: false },
+      { name: "Add Course", path: "/admin/courses/create", pro: false },
+    ],
   },
 
   {
     icon: <CalenderIcon />,
     name: "Students",
-    subItems: [{ name: "Students", path: "/admin/students", pro: false },{ name: "Add Student", path: "/admin/students/create", pro: false }],
+    subItems: [
+      { name: "Students", path: "/admin/students", pro: false },
+      { name: "Add Student", path: "/admin/students/create", pro: false },
+    ],
   },
- 
-  
-  
 ];
 
-const othersItems: NavItem[] = [
-];
+const othersItems: NavItem[] = [];
 
 const AdminSideBar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
@@ -189,7 +193,7 @@ const AdminSideBar: React.FC = () => {
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // const isActive = (path: string) => path === pathname;
-   const isActive = useCallback((path: string) => path === pathname, [pathname]);
+  const isActive = useCallback((path: string) => path === pathname, [pathname]);
 
   useEffect(() => {
     // Check if the current path matches any submenu item
@@ -215,7 +219,7 @@ const AdminSideBar: React.FC = () => {
     if (!submenuMatched) {
       setOpenSubmenu(null);
     }
-  }, [pathname,isActive]);
+  }, [pathname, isActive]);
 
   useEffect(() => {
     // Set the height of the submenu items when the submenu is opened
