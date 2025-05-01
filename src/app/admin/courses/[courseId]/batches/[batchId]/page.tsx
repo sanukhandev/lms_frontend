@@ -367,7 +367,7 @@ export default function BatchDetailsPage() {
                   {session.meeting_link &&
                   session.class_status === "scheduled" ? (
                     <a
-                      href={session.meeting_link}
+                      href={"/meeting/" + session.id}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-500 hover:underline"
