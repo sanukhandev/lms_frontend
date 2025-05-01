@@ -9,6 +9,7 @@ import Button from "@/components/ui/button/Button";
 import { api } from "@/util/api";
 import MultiSelect from "@/components/form/MultiSelect";
 import CourseInfoCard from "@/components/user-profile/CourseInfoCard";
+import Preloader from "@/components/common/Preloader";
 
 export default function CreateBatchPage() {
   const { courseId } = useParams(); // Fetching the courseId from URL params
@@ -16,9 +17,20 @@ export default function CreateBatchPage() {
 
   // Initializing state variables
   const [loading, setLoading] = useState(false);
-  const [courses, setCourses] = useState<{ value: string; label: string }[]>(
-    []
-  );
+  const [course, setCourse] = useState<{
+    id: number;
+    title: string;
+    description: string;
+    instructor: {
+      email: string;
+      name: string;
+      phone: string;
+      id: number;
+    };
+    duration_weeks: number;
+    syllabus: string[];
+  } | null>(null); // Define the course state with the required fields
+
   const [form, setForm] = useState({
     course_id: courseId, // Initially setting course_id from URL params
     name: "",
@@ -28,6 +40,8 @@ export default function CreateBatchPage() {
     session_start_time: "",
     session_end_time: "",
   });
+
+  const [error, setError] = useState("");
 
   // Handle input changes
   const handleChange = (
@@ -41,10 +55,22 @@ export default function CreateBatchPage() {
     setForm({ ...form, session_days: selectedDays });
   };
 
+  // Fetch course details based on courseId
+  const fetchCourseDetails = async () => {
+    try {
+      const res = await api.get(`/courses/${courseId}`);
+      setCourse(res.data.data); // Setting the course data
+    } catch (err) {
+      console.error("Error fetching course details", err);
+      setError("Failed to load course details");
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
     try {
       // Send the batch data to the server
@@ -58,35 +84,23 @@ export default function CreateBatchPage() {
 
       // After success, redirect to the batches list
       alert("Batch created successfully!");
-      router.push("/admin/batches");
+      router.back();
     } catch (err) {
       console.error("Error creating batch:", err);
-      alert("Failed to create batch.");
+      setError("Failed to create batch.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch the courses available for selection
-  const fetchCourses = async () => {
-    try {
-      const res = await api.get("/courses");
-      const courseOptions = res.data.data.map(
-        (course: { id: number; title: string }) => ({
-          value: course.id.toString(),
-          label: course.title,
-        })
-      );
-      setCourses(courseOptions);
-    } catch (err) {
-      console.error("Failed to fetch courses", err);
-    }
-  };
-
-  // Fetch courses once when the page loads
   useEffect(() => {
-    fetchCourses();
-  }, []);
+    if (courseId) {
+      fetchCourseDetails(); // Fetch course details on page load
+    }
+  }, [courseId]);
+
+  if (loading) return <Preloader />;
+  if (error) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="p-6">
@@ -94,24 +108,23 @@ export default function CreateBatchPage() {
         title="Create New Batch"
         buttonText="Back to Batches"
         buttonLink="/admin/batches"
-          >
-              <h4 className="text-xl font-semibold text-gray-800 dark:text-white/90 mb-4">
-                  Course Information
-              </h4>
-                <CourseInfoCard
-                    course={{
-                        id: Number(courseId),
-                        title: "",
-                        description: "",
-                        instructor_id: "",
-                        duration_weeks: 0,
-                        syllabus: [],
-                    }}
-                  onUpdate={() => { }}
-                />
+      >
+        {course ? (
+          <>
+            <h4 className="text-xl font-semibold text-gray-800 dark:text-white/90 mb-4">
+              Course Information
+            </h4>
+            <CourseInfoCard
+              course={course} // Passing the complete course object
+              onUpdate={() => {}}
+            />
+          </>
+        ) : (
+          <p>Loading course information...</p>
+        )}
       </ComponentCard>
-      <ComponentCard title="Batch Details">
 
+      <ComponentCard title="Batch Details">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Batch Name */}
           <div>

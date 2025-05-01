@@ -14,7 +14,13 @@ interface Course {
   id: string | number;
   title: string;
   description: string;
-  instructor_id: string | number;
+  instructor: {
+    email: string;
+    name: string;
+    phone: string;
+    id: string | number;
+
+  }
   duration_weeks: number;
   syllabus: string[];
 }
@@ -67,7 +73,7 @@ export default function CourseInfoCard({
               Description: {formData.description}
             </p>
             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              Instructor ID: #{formData.instructor_id}
+              Instructor ID: #{`${formData.instructor.id} - ${formData.instructor.name} (${formData.instructor.email})`}
             </p>
             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
               Duration: {formData.duration_weeks} weeks
@@ -111,16 +117,7 @@ export default function CourseInfoCard({
                   }
                 />
               </div>
-              <div>
-                <Label>Instructor ID</Label>
-                <Input
-                  type="number"
-                  value={formData.instructor_id}
-                  onChange={(e) =>
-                    handleInputChange("instructor_id", e.target.value)
-                  }
-                />
-              </div>
+            
               <div>
                 <Label>Duration (Weeks)</Label>
                 <Input

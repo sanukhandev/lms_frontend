@@ -10,6 +10,7 @@ import BatchInfoCard from "@/components/user-profile/BatchCardInfo";
 import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
 import MultiSelect from "@/components/form/MultiSelect";
+import Preloader from "@/components/common/Preloader";
 
 interface Student {
   id: number;
@@ -103,7 +104,7 @@ export default function BatchDetailsPage() {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Preloader/>
   if (error || !batch) return <p className="text-red-500">{error}</p>;
 
   return (
