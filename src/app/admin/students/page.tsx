@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import ComponentCard from "@/components/common/ComponentCard";
 import { api } from "@/util/api";
 import StudentTable from "@/components/tables/StudentTable";
+import Preloader from "@/components/common/Preloader"; // Import Preloader component
 
 type Student = {
   id: number;
   name: string;
   email: string;
   phone?: string;
-  secondary_phone?: string;
+  secondry_phone?: string;
   created_at: string;
 };
 
@@ -26,14 +27,17 @@ export default function Students() {
   const fetchStudents = async () => {
     try {
       const response = await api.get("/students");
-      setStudents(response.data.data || []);
+      setStudents(response.data.data || []); // Store the fetched students
     } catch (err: unknown) {
       console.error(err);
-      setError("Failed to load students");
+      setError("Failed to load students. Please try again later.");
     } finally {
       setLoading(false);
     }
   };
+
+  // Show preloader while fetching data
+  if (loading) return <Preloader />;
 
   return (
     <div className="space-y-6 mt-6">
@@ -43,9 +47,7 @@ export default function Students() {
         buttonLink="/admin/students/create"
         className="mb-6"
       >
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
+        {error ? (
           <p className="text-red-500">{error}</p>
         ) : (
           <StudentTable items={students} />

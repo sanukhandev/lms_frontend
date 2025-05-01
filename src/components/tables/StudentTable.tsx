@@ -14,7 +14,7 @@ type Student = {
   name: string;
   email: string;
   phone?: string;
-  secondary_phone?: string;
+  secondry_phone?: string;
   created_at: string;
 };
 
@@ -30,22 +30,40 @@ export default function StudentTable({ items }: StudentTableProps) {
           <Table>
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
                   ID
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
                   Name
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
                   Email
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
                   Phone
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
                   Secondary Phone
                 </TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
                   Created At
                 </TableCell>
               </TableRow>
@@ -68,7 +86,7 @@ export default function StudentTable({ items }: StudentTableProps) {
                       {student.phone || "-"}
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
-                      {student.secondary_phone || "-"}
+                      {student.secondry_phone || "-"}
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
                       {new Date(student.created_at).toLocaleDateString()}
@@ -77,7 +95,7 @@ export default function StudentTable({ items }: StudentTableProps) {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell  className="py-6 text-center text-gray-500 dark:text-gray-400">
+                  <TableCell className="py-6 text-center text-gray-500 dark:text-gray-400">
                     No students found.
                   </TableCell>
                 </TableRow>

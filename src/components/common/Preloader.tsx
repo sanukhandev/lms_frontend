@@ -1,8 +1,9 @@
+"use client";
+
 import React from "react";
 
 const Preloader = () => {
   return (
-    //   { keep it centered }
     <div className="flex items-center justify-center h-screen">
       <svg
         className="pl"
@@ -13,8 +14,8 @@ const Preloader = () => {
       >
         <defs>
           <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#000"></stop>
-            <stop offset="100%" stopColor="#fff"></stop>
+            <stop offset="0%" stopColor="hsl(180, 56%, 91%)"></stop>
+            <stop offset="100%" stopColor="hsl(180, 53%, 85%)"></stop>
           </linearGradient>
           <mask id="mask1">
             <rect x="0" y="0" width="160" height="160" fill="url(#grad)"></rect>
@@ -38,7 +39,7 @@ const Preloader = () => {
               cy="80"
               r="72"
               fill="none"
-              stroke="hsl(180, 100%, 13%)"
+              stroke="hsl(180, 50%, 58%)"
               strokeWidth="16"
               strokeDasharray="452.39 452.39"
               strokeDashoffset="452"
@@ -55,7 +56,7 @@ const Preloader = () => {
               cy="80"
               r="72"
               fill="none"
-              stroke="hsl(193, 90%, 55%)"
+              stroke="hsl(180, 53%, 47%)"
               strokeWidth="16"
               strokeDasharray="452.39 452.39"
               strokeDashoffset="452"
@@ -75,49 +76,49 @@ const Preloader = () => {
           >
             <polyline
               className="pl__tick"
-              stroke="hsl(223, 10%, 90%)"
+              stroke="hsl(180, 100%, 32%)"
               points="0,2 0,14"
               transform="rotate(-135,0,0) translate(0,40)"
             ></polyline>
             <polyline
               className="pl__tick"
-              stroke="hsl(223, 10%, 90%)"
+              stroke="hsl(180, 100%, 32%)"
               points="0,2 0,14"
               transform="rotate(-90,0,0) translate(0,40)"
             ></polyline>
             <polyline
               className="pl__tick"
-              stroke="hsl(223, 10%, 90%)"
+              stroke="hsl(180, 100%, 32%)"
               points="0,2 0,14"
               transform="rotate(-45,0,0) translate(0,40)"
             ></polyline>
             <polyline
               className="pl__tick"
-              stroke="hsl(223, 10%, 90%)"
+              stroke="hsl(180, 100%, 32%)"
               points="0,2 0,14"
               transform="rotate(0,0,0) translate(0,40)"
             ></polyline>
             <polyline
               className="pl__tick"
-              stroke="hsl(223, 10%, 90%)"
+              stroke="hsl(180, 100%, 32%)"
               points="0,2 0,14"
               transform="rotate(45,0,0) translate(0,40)"
             ></polyline>
             <polyline
               className="pl__tick"
-              stroke="hsl(223, 10%, 90%)"
+              stroke="hsl(180, 100%, 32%)"
               points="0,2 0,14"
               transform="rotate(90,0,0) translate(0,40)"
             ></polyline>
             <polyline
               className="pl__tick"
-              stroke="hsl(223, 10%, 90%)"
+              stroke="hsl(180, 100%, 32%)"
               points="0,2 0,14"
               transform="rotate(135,0,0) translate(0,40)"
             ></polyline>
             <polyline
               className="pl__tick"
-              stroke="hsl(223, 10%, 90%)"
+              stroke="hsl(180, 100%, 32%)"
               points="0,2 0,14"
               transform="rotate(180,0,0) translate(0,40)"
             ></polyline>
@@ -190,7 +191,7 @@ const Preloader = () => {
                 d="M17.998,1.506l13.892,43.594c.455,1.426-.56,2.899-1.998,2.899H2.108c-1.437,0-2.452-1.473-1.998-2.899L14.002,1.506c.64-2.008,3.356-2.008,3.996,0Z"
               ></path>
               <path
-                fill="hsl(223, 10%, 90%)"
+                fill="hsl(180, 100%, 40%)"
                 d="M14.009,102.499L.109,58.889c-.453-1.421,.559-2.889,1.991-2.889H29.899c1.433,0,2.444,1.468,1.991,2.889l-13.899,43.61c-.638,2.001-3.345,2.001-3.983,0Z"
               ></path>
             </g>

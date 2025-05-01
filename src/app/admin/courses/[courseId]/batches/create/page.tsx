@@ -9,7 +9,7 @@ import Button from "@/components/ui/button/Button";
 import { api } from "@/util/api";
 import MultiSelect from "@/components/form/MultiSelect";
 import CourseInfoCard from "@/components/user-profile/CourseInfoCard";
-import Preloader from "@/components/common/Preloader";
+import Preloader from "@/components/common/Preloader"; // Import Preloader for global use
 
 export default function CreateBatchPage() {
   const { courseId } = useParams(); // Fetching the courseId from URL params
@@ -29,7 +29,7 @@ export default function CreateBatchPage() {
     };
     duration_weeks: number;
     syllabus: string[];
-  } | null>(null); // Define the course state with the required fields
+  } | null>(null);
 
   const [form, setForm] = useState({
     course_id: courseId, // Initially setting course_id from URL params
@@ -99,7 +99,7 @@ export default function CreateBatchPage() {
     }
   }, [courseId]);
 
-  if (loading) return <Preloader />;
+  if (loading) return <Preloader />; // Use preloader during loading state
   if (error) return <p className="text-red-500">{error}</p>;
 
   return (

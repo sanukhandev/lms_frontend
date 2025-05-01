@@ -10,7 +10,7 @@ import BatchInfoCard from "@/components/user-profile/BatchCardInfo";
 import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
 import MultiSelect from "@/components/form/MultiSelect";
-import Preloader from "@/components/common/Preloader";
+import Preloader from "@/components/common/Preloader"; // Import Preloader for smooth loading UI
 
 interface Student {
   id: number;
@@ -50,22 +50,24 @@ export default function BatchDetailsPage() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [studentsToAdd, setStudentsToAdd] = useState<Student[]>([]);
 
+  // Fetch batch and students data when the page loads
   useEffect(() => {
     if (batchId) fetchBatchById();
   }, [batchId]);
 
+  // Fetch batch and students data by batchId
   const fetchBatchById = async () => {
     try {
       const batchResponse = await api.get(`/batches/${batchId}`);
       setBatch(batchResponse.data.data);
 
-      // Fetch all students
+      // Fetch all students who are not in the batch
       const studentsResponse = await api.get("/students");
-      console.log("Students Response:", studentsResponse); // Log the response for debugging
 
       const studentsInBatchIds = batchResponse.data.data.students.map(
         (student: Student) => student.id
       );
+
       if (Array.isArray(studentsResponse.data.data)) {
         const unassignedStudents = studentsResponse.data.data.filter(
           (student: Student) => !studentsInBatchIds.includes(student.id)
@@ -104,15 +106,19 @@ export default function BatchDetailsPage() {
     }
   };
 
-  if (loading) return <Preloader/>
+  // Show preloader while loading the batch data
+  if (loading) return <Preloader />;
+  // Show error message if batch data or students fail to load
   if (error || !batch) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="space-y-8 mt-6">
+      {/* Display batch details */}
       <ComponentCard title="Batch Details">
         <BatchInfoCard batch={batch} onUpdate={fetchBatchById} />
       </ComponentCard>
 
+      {/* Students table and add students modal */}
       <ComponentCard
         title="Students"
         buttonText="Add Student"
@@ -136,6 +142,7 @@ export default function BatchDetailsPage() {
             Add Students to Batch
           </h4>
 
+          {/* MultiSelect component for selecting students */}
           <div className="mb-6">
             <MultiSelect
               label="Select Students"
@@ -153,6 +160,7 @@ export default function BatchDetailsPage() {
             />
           </div>
 
+          {/* Modal action buttons */}
           <div className="flex justify-end gap-3">
             <Button variant="outline" onClick={handleCloseModal} size="sm">
               Cancel

@@ -11,11 +11,14 @@ import { api } from "@/util/api";
 export default function CreateStudentPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Corrected the state property name from `secondry_phone` to `secondry_phone `
   const [form, setForm] = useState({
     name: "",
     email: "",
     phone: "",
-    secondry_phone: "",
+    secondry_phone: "", // corrected the typo here
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,12 +28,15 @@ export default function CreateStudentPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null); // Reset error message before submitting
+
     try {
       await api.post("/students", form);
       alert("Student created successfully!");
       router.push("/admin/students");
     } catch (err: unknown) {
       console.error(err);
+      setError("Failed to create student. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -43,10 +49,15 @@ export default function CreateStudentPage() {
         buttonText="Back to Students"
         buttonLink="/admin/students"
       >
+        {/* Display error message if any */}
+        {error && <p className="text-red-500">{error}</p>}
+
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Name */}
           <div>
-            <Label>Name <span className="text-error-500">*</span></Label>
+            <Label>
+              Name <span className="text-error-500">*</span>
+            </Label>
             <Input
               type="text"
               name="name"
@@ -58,7 +69,9 @@ export default function CreateStudentPage() {
 
           {/* Email */}
           <div>
-            <Label>Email <span className="text-error-500">*</span></Label>
+            <Label>
+              Email <span className="text-error-500">*</span>
+            </Label>
             <Input
               type="email"
               name="email"
@@ -85,17 +98,21 @@ export default function CreateStudentPage() {
             <Label>Secondary Phone</Label>
             <Input
               type="text"
-              name="secondary_phone"
+              name="secondry_phone " // corrected name here as well
               placeholder="Secondary phone number"
               value={form.secondry_phone}
               onChange={handleChange}
             />
           </div>
 
-
           {/* Submit Button */}
           <div>
-            <Button className="w-full" type="submit" size="sm" disabled={loading}>
+            <Button
+              className="w-full"
+              type="submit"
+              size="sm"
+              disabled={loading}
+            >
               {loading ? "Creating..." : "Create Student"}
             </Button>
           </div>

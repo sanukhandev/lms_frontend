@@ -14,7 +14,7 @@ type Instructor = {
   name: string;
   email: string;
   phone?: string;
-  secondary_phone?: string;
+  secondry_phone?: string;
   created_at: string;
 };
 
@@ -88,7 +88,7 @@ export default function InstructorTable({ items }: InstructorTableProps) {
                       {instructor.phone || "-"}
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
-                      {instructor.secondary_phone || "-"}
+                      {instructor.secondry_phone || "-"}
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
                       {new Date(instructor.created_at).toLocaleDateString()}
@@ -97,9 +97,7 @@ export default function InstructorTable({ items }: InstructorTableProps) {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell
-                    className="py-6 text-center text-gray-500 dark:text-gray-400"
-                  >
+                  <TableCell className="py-6 text-center text-gray-500 dark:text-gray-400">
                     No instructors found.
                   </TableCell>
                 </TableRow>
