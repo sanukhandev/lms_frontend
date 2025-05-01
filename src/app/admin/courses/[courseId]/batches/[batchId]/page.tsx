@@ -25,7 +25,7 @@ interface ClassSession {
   end_time: string;
   topic: string | null;
   notes: string | null;
-  class_status: "scheduled" | "completed" | "cancelled"; // Refactored to use class_status
+  class_status: "not_started" | "completed" | "cancelled"; // Refactored to use class_status
   meeting_link: string | null; // Link for the meeting
 }
 
@@ -365,7 +365,7 @@ export default function BatchDetailsPage() {
                 </td>
                 <td className="p-2">
                   {session.meeting_link &&
-                  session.class_status === "scheduled" ? (
+                  session.class_status === "not_started" ? (
                     <a
                       href={"/meeting/" + session.id}
                       target="_blank"
