@@ -935,3 +935,7 @@ span.flatpickr-weekday,
     stroke-dashoffset: 0;
   }
 }
+
+#jitsiMeeting-0{
+  @apply w-full h-full;
+}
