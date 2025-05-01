@@ -63,6 +63,16 @@ export default function BatchDetailsPage() {
     if (batchId) fetchBatchById();
   }, [batchId]);
 
+  const handleJoinMeeting = (sessionId: number) => {
+    // Open the meeting URL in a new window with custom options
+    const meetingUrl = `/meeting/${sessionId}`;
+
+    window.open(
+      meetingUrl,
+      "_blank",
+      "toolbar=no,scrollbars=no,resizable=no,top=100,left=100,width=800,height=600"
+    );
+  };
   const fetchBatchById = async () => {
     setLoading(true);
     try {
@@ -366,14 +376,13 @@ export default function BatchDetailsPage() {
                 <td className="p-2">
                   {session.meeting_link &&
                   session.class_status === "not_started" ? (
-                    <a
-                      href={"/meeting/" + session.id}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Button
+                      variant="outline"
+                      onClick={() => handleJoinMeeting(session.id)}
                       className="text-blue-500 hover:underline"
                     >
-                      Join Meeting
-                    </a>
+                      Join Class
+                    </Button>
                   ) : session.class_status === "completed" ? (
                     <span className="text-gray-500">Class Ended</span>
                   ) : (
