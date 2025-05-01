@@ -49,6 +49,7 @@ export default function BatchDetailsPage() {
   const [error, setError] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
   const [studentsToAdd, setStudentsToAdd] = useState<Student[]>([]);
+  const [modalLoading, setModalLoading] = useState(false);
 
   // Fetch batch and students data when the page loads
   useEffect(() => {
@@ -57,6 +58,7 @@ export default function BatchDetailsPage() {
 
   // Fetch batch and students data by batchId
   const fetchBatchById = async () => {
+    setLoading(true);
     try {
       const batchResponse = await api.get(`/batches/${batchId}`);
       setBatch(batchResponse.data.data);
@@ -93,16 +95,19 @@ export default function BatchDetailsPage() {
   };
 
   const handleAddStudents = async () => {
+    setModalLoading(true);
     try {
       const selectedStudentIds = studentsToAdd.map((student) => student.id);
       await api.put(`/batches/${batch?.id}/students`, {
         student_ids: selectedStudentIds,
       });
-      fetchBatchById(); // Re-fetch the batch data after adding students
-      setModalOpen(false); // Close the modal
+      await fetchBatchById(); // Ensure data is refreshed before closing
+      setModalOpen(false); // Close modal
     } catch (err) {
       console.error("Error adding students:", err);
       setError("Failed to add students.");
+    } finally {
+      setModalLoading(false);
     }
   };
 
@@ -138,37 +143,41 @@ export default function BatchDetailsPage() {
         className="max-w-3xl m-4"
       >
         <div className="w-full overflow-y-auto rounded-3xl bg-white dark:bg-gray-900 p-6 lg:p-10">
-          <h4 className="text-2xl font-semibold text-gray-800 dark:text-white/90 mb-6">
-            Add Students to Batch
-          </h4>
+          {modalLoading ? (
+            <Preloader />
+          ) : (
+            <>
+              <h4 className="text-2xl font-semibold text-gray-800 dark:text-white/90 mb-6">
+                Add Students to Batch
+              </h4>
 
-          {/* MultiSelect component for selecting students */}
-          <div className="mb-6">
-            <MultiSelect
-              label="Select Students"
-              options={availableStudents.map((student) => ({
-                value: student.id.toString(),
-                text: `${student.name} (${student.email})`,
-                selected: false,
-              }))}
-              onChange={(selectedIds) => {
-                const selectedStudents = availableStudents.filter((student) =>
-                  selectedIds.includes(student.id.toString())
-                );
-                setStudentsToAdd(selectedStudents);
-              }}
-            />
-          </div>
+              <div className="mb-6">
+                <MultiSelect
+                  label="Select Students"
+                  options={availableStudents.map((student) => ({
+                    value: student.id.toString(),
+                    text: `${student.name} (${student.email})`,
+                    selected: false,
+                  }))}
+                  onChange={(selectedIds) => {
+                    const selectedStudents = availableStudents.filter(
+                      (student) => selectedIds.includes(student.id.toString())
+                    );
+                    setStudentsToAdd(selectedStudents);
+                  }}
+                />
+              </div>
 
-          {/* Modal action buttons */}
-          <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={handleCloseModal} size="sm">
-              Cancel
-            </Button>
-            <Button onClick={handleAddStudents} size="sm">
-              Add Students
-            </Button>
-          </div>
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={handleCloseModal} size="sm">
+                  Cancel
+                </Button>
+                <Button onClick={handleAddStudents} size="sm">
+                  Add Students
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </Modal>
 
