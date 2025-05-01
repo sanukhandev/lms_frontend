@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { api } from "@/util/api";
 import ComponentCard from "@/components/common/ComponentCard";
-import Link from "next/link";
 import StudentTable from "@/components/ecommerce/StudentsTable";
 import BatchInfoCard from "@/components/user-profile/BatchCardInfo";
 import Button from "@/components/ui/button/Button";
@@ -26,6 +25,8 @@ interface ClassSession {
   end_time: string;
   topic: string | null;
   notes: string | null;
+  class_status: "scheduled" | "completed" | "cancelled"; // Refactored to use class_status
+  meeting_link: string | null; // Link for the meeting
 }
 
 interface Batch {
@@ -47,23 +48,27 @@ export default function BatchDetailsPage() {
   const [availableStudents, setAvailableStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isAddStudentModalOpen, setAddStudentModalOpen] = useState(false);
+  const [isManageClassModalOpen, setManageClassModalOpen] = useState(false);
   const [studentsToAdd, setStudentsToAdd] = useState<Student[]>([]);
+  const [selectedSession, setSelectedSession] = useState<ClassSession | null>(
+    null
+  );
   const [modalLoading, setModalLoading] = useState(false);
+  const [newSessionDate, setNewSessionDate] = useState<string>("");
+  const [newSessionStartTime, setNewSessionStartTime] = useState<string>("");
+  const [newSessionEndTime, setNewSessionEndTime] = useState<string>("");
 
-  // Fetch batch and students data when the page loads
   useEffect(() => {
     if (batchId) fetchBatchById();
   }, [batchId]);
 
-  // Fetch batch and students data by batchId
   const fetchBatchById = async () => {
     setLoading(true);
     try {
       const batchResponse = await api.get(`/batches/${batchId}`);
       setBatch(batchResponse.data.data);
 
-      // Fetch all students who are not in the batch
       const studentsResponse = await api.get("/students");
 
       const studentsInBatchIds = batchResponse.data.data.students.map(
@@ -74,7 +79,7 @@ export default function BatchDetailsPage() {
         const unassignedStudents = studentsResponse.data.data.filter(
           (student: Student) => !studentsInBatchIds.includes(student.id)
         );
-        setAvailableStudents(unassignedStudents); // Set available students
+        setAvailableStudents(unassignedStudents);
       } else {
         setError("Invalid students data structure.");
       }
@@ -86,12 +91,21 @@ export default function BatchDetailsPage() {
     }
   };
 
-  const handleOpenModal = () => {
-    setModalOpen(true);
+  const handleOpenAddStudentModal = () => {
+    setAddStudentModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
+  const handleCloseAddStudentModal = () => {
+    setAddStudentModalOpen(false);
+  };
+
+  const handleOpenManageClassModal = (session: ClassSession) => {
+    setSelectedSession(session);
+    setManageClassModalOpen(true);
+  };
+
+  const handleCloseManageClassModal = () => {
+    setManageClassModalOpen(false);
   };
 
   const handleAddStudents = async () => {
@@ -101,8 +115,8 @@ export default function BatchDetailsPage() {
       await api.put(`/batches/${batch?.id}/students`, {
         student_ids: selectedStudentIds,
       });
-      await fetchBatchById(); // Ensure data is refreshed before closing
-      setModalOpen(false); // Close modal
+      await fetchBatchById();
+      setAddStudentModalOpen(false);
     } catch (err) {
       console.error("Error adding students:", err);
       setError("Failed to add students.");
@@ -111,23 +125,59 @@ export default function BatchDetailsPage() {
     }
   };
 
-  // Show preloader while loading the batch data
+  const handleManageClassAction = async (action: string) => {
+    if (selectedSession) {
+      setModalLoading(true);
+      try {
+        if (action === "generate_meeting") {
+          await api.post(
+            `/sessions/${selectedSession.id}/generate-meeting-link`
+          );
+        }
+        if (action === "reschedule") {
+          await api.post(`/sessions/${selectedSession.id}/reschedule`, {
+            date: newSessionDate,
+            start_time: newSessionStartTime,
+            end_time: newSessionEndTime,
+          });
+        }
+
+        if (action === "cancel") {
+          await api.post(`/sessions/${batch?.id}/add`, {
+            date: newSessionDate,
+            start_time: newSessionStartTime,
+            end_time: newSessionEndTime,
+            class_status: "scheduled", // Adding a new class at the end
+          });
+        }
+
+        fetchBatchById();
+        setManageClassModalOpen(false);
+      } catch (err) {
+        console.error("Error during class session action:", err);
+        setError("Failed to update class session.");
+      } finally {
+        setModalLoading(false);
+      }
+    }
+  };
+
+  // Check if current time is between the start and end time of the session
+
   if (loading) return <Preloader />;
-  // Show error message if batch data or students fail to load
+
   if (error || !batch) return <p className="text-red-500">{error}</p>;
 
   return (
     <div className="space-y-8 mt-6">
-      {/* Display batch details */}
       <ComponentCard title="Batch Details">
         <BatchInfoCard batch={batch} onUpdate={fetchBatchById} />
       </ComponentCard>
 
-      {/* Students table and add students modal */}
       <ComponentCard
         title="Students"
         buttonText="Add Student"
-        onModalOpen={handleOpenModal} // Trigger modal open
+        onModalOpen={handleOpenAddStudentModal}
       >
         {batch.students.length > 0 ? (
           <StudentTable students={batch.students} />
@@ -138,8 +188,8 @@ export default function BatchDetailsPage() {
 
       {/* Add Students Modal */}
       <Modal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
+        isOpen={isAddStudentModalOpen}
+        onClose={handleCloseAddStudentModal}
         className="max-w-3xl m-4"
       >
         <div className="w-full overflow-y-auto rounded-3xl bg-white dark:bg-gray-900 p-6 lg:p-10">
@@ -169,11 +219,107 @@ export default function BatchDetailsPage() {
               </div>
 
               <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={handleCloseModal} size="sm">
+                <Button
+                  variant="outline"
+                  onClick={handleCloseAddStudentModal}
+                  size="sm"
+                >
                   Cancel
                 </Button>
                 <Button onClick={handleAddStudents} size="sm">
                   Add Students
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+      </Modal>
+
+      {/* Manage Class Modal */}
+      <Modal
+        isOpen={isManageClassModalOpen}
+        onClose={handleCloseManageClassModal}
+        className="max-w-3xl m-4"
+      >
+        <div className="w-full overflow-y-auto rounded-3xl bg-white dark:bg-gray-900 p-6 lg:p-10">
+          {modalLoading ? (
+            <Preloader />
+          ) : (
+            <>
+              <h4 className="text-2xl font-semibold text-gray-800 dark:text-white/90 mb-6">
+                Manage Class Session: {selectedSession?.topic}
+              </h4>
+
+              <div className="mb-6">
+                <Button
+                  variant="outline"
+                  onClick={() => handleManageClassAction("generate_meeting")}
+                  size="sm"
+                >
+                  Generate Meeting Link
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => handleManageClassAction("reschedule")}
+                  size="sm"
+                >
+                  Reschedule Class
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() => handleManageClassAction("cancel")}
+                  size="sm"
+                >
+                  Cancel Class
+                </Button>
+              </div>
+
+              {/* Postpone Date and Time Input */}
+              <div className="mb-6">
+                <label className="block mb-2">Select New Date</label>
+                <input
+                  type="date"
+                  value={newSessionDate}
+                  onChange={(e) => setNewSessionDate(e.target.value)}
+                  className="w-full border rounded p-2"
+                />
+              </div>
+
+              <div className="mb-6">
+                <label className="block mb-2">Select New Start Time</label>
+                <input
+                  type="time"
+                  value={newSessionStartTime}
+                  onChange={(e) => setNewSessionStartTime(e.target.value)}
+                  className="w-full border rounded p-2"
+                />
+              </div>
+
+              <div className="mb-6">
+                <label className="block mb-2">Select New End Time</label>
+                <input
+                  type="time"
+                  value={newSessionEndTime}
+                  onChange={(e) => setNewSessionEndTime(e.target.value)}
+                  className="w-full border rounded p-2"
+                />
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <Button
+                  variant="outline"
+                  onClick={handleCloseManageClassModal}
+                  size="sm"
+                >
+                  Close
+                </Button>
+                <Button
+                  onClick={() => handleManageClassAction("postpone")}
+                  size="sm"
+                >
+                  Confirm Postpone
                 </Button>
               </div>
             </>
@@ -190,6 +336,7 @@ export default function BatchDetailsPage() {
               <th className="p-2">Time</th>
               <th className="p-2">Topic</th>
               <th className="p-2">Notes</th>
+              <th className="p-2">Status</th>
               <th className="p-2">Actions</th>
             </tr>
           </thead>
@@ -203,12 +350,40 @@ export default function BatchDetailsPage() {
                 <td className="p-2">{session.topic || "-"}</td>
                 <td className="p-2">{session.notes || "-"}</td>
                 <td className="p-2">
-                  <Link
-                    className="text-blue-500 hover:underline"
-                    href={`/admin/batches/${batch.id}/class-sessions/${session.id}`}
+                  {/* Displaying status badges */}
+                  <span
+                    className={`${
+                      session.class_status === "completed"
+                        ? "bg-success-100 text-success-800"
+                        : session.class_status === "cancelled"
+                        ? "bg-danger-100 text-danger-800"
+                        : "bg-warning-100 text-warning-800"
+                    } inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium`}
                   >
-                    Edit
-                  </Link>
+                    {session.class_status.toUpperCase()}
+                  </span>
+                </td>
+                <td className="p-2">
+                  {session.meeting_link &&
+                  session.class_status === "scheduled" ? (
+                    <a
+                      href={session.meeting_link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:underline"
+                    >
+                      Join Meeting
+                    </a>
+                  ) : session.class_status === "completed" ? (
+                    <span className="text-gray-500">Class Ended</span>
+                  ) : (
+                    <button
+                      onClick={() => handleOpenManageClassModal(session)}
+                      className="text-blue-500 hover:underline"
+                    >
+                      Manage Class
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
