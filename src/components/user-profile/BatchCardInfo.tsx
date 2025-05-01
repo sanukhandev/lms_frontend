@@ -10,6 +10,7 @@ import { api } from "@/util/api";
 import MultiSelect from "../form/MultiSelect";
 import DatePicker from "../form/date-picker";
 import { TimeIcon } from "@/icons";
+import Preloader from "../common/Preloader";
 
 const WEEKDAY_OPTIONS = [
   { value: "Monday", text: "Monday", selected: false },
@@ -42,6 +43,7 @@ export default function BatchInfoCard({
   const { isOpen, openModal, closeModal } = useModal();
   const [error, setError] = useState<string>("");
   const [formData, setFormData] = useState<Batch>({ ...batch });
+  const [modalLoading, setModalLoading] = useState(false);
   const [selectedDays, setSelectedDays] = useState<string[]>(
     batch.session_days || []
   );
@@ -54,27 +56,28 @@ export default function BatchInfoCard({
   };
 
   const handleSave = () => {
-    // remove the session_days from formData before sending it to the API
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    setModalLoading(true); // start loading
     const { session_start_time, session_end_time, ...rest } = formData;
     api
       .put(`/batches/${formData.id}`, {
         ...rest,
         session_time: {
-          start: formData.session_start_time,
-          end: formData.session_end_time,
+          start: session_start_time.substring(0, 5),
+          end: session_end_time.substring(0, 5),
         },
-
         session_days: selectedDays,
       })
       .then((response) => {
         closeModal();
-        onUpdate(); // Call the onUpdate function to refresh the data
+        onUpdate();
         console.log("Batch updated successfully:", response.data);
       })
       .catch((error) => {
         console.error("Error updating batch:", error);
         setError("Failed to update batch. Please try again.");
+      })
+      .finally(() => {
+        setModalLoading(false); // stop loading
       });
   };
 
@@ -117,97 +120,119 @@ export default function BatchInfoCard({
 
       <Modal isOpen={isOpen} onClose={closeModal} className="max-w-3xl m-4">
         <div className="w-full overflow-y-auto rounded-3xl bg-white dark:bg-gray-900 p-6 lg:p-10">
-          <h4 className="text-2xl font-semibold text-gray-800 dark:text-white/90 mb-6">
-            Edit Batch Information
-          </h4>
-          {error && <div className="mb-4 text-red-500 text-sm">{error}</div>}
-          <form className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <Label>Batch Name</Label>
-                <Input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                />
-              </div>
-              <div>
-                <Label>Course ID</Label>
-                <Input
-                  type="number"
-                  value={formData.course_id}
-                  onChange={(e) =>
-                    handleInputChange("course_id", e.target.value)
-                  }
-                />
-              </div>
-              <div>
-                <DatePicker
-                  id="start-date"
-                  label="Start Date"
-                  placeholder="Select start date"
-                  defaultDate={formData.start_date}
-                  onChange={(d, val) => handleInputChange("start_date", val)}
-                />
-              </div>
-              <div>
-                <DatePicker
-                  id="end-date"
-                  label="End Date"
-                  placeholder="Select end date"
-                  defaultDate={formData.end_date}
-                  onChange={(d, val) => handleInputChange("end_date", val)}
-                />
-              </div>
-              <div className="md:col-span-2">
-                <MultiSelect
-                  label="Session Days"
-                  options={WEEKDAY_OPTIONS}
-                  defaultSelected={formData.session_days || []}
-                  onChange={(days) => setSelectedDays(days)}
-                />
-              </div>
-              <div>
-                <Label>Start Time</Label>
-                <div className="relative">
-                  <Input
-                    type="time"
-                    value={formData.session_start_time}
-                    onChange={(e) =>
-                      handleInputChange("session_start_time", e.target.value)
-                    }
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
-                    <TimeIcon />
-                  </span>
-                </div>
-              </div>
-              <div>
-                <Label>End Time</Label>
-                <div className="relative">
-                  <Input
-                    type="time"
-                    value={formData.session_end_time}
-                    onChange={(e) =>
-                      handleInputChange("session_end_time", e.target.value)
-                    }
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
-                    <TimeIcon />
-                  </span>
-                </div>
-              </div>
-            </div>
+          {modalLoading ? (
+            <Preloader />
+          ) : (
+            <>
+              <h4 className="text-2xl font-semibold text-gray-800 dark:text-white/90 mb-6">
+                Edit Batch Information
+              </h4>
+              {error && (
+                <div className="mb-4 text-red-500 text-sm">{error}</div>
+              )}
+              <form className="space-y-8">
+                <form className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label>Batch Name</Label>
+                      <Input
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) =>
+                          handleInputChange("name", e.target.value)
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label>Course ID</Label>
+                      <Input
+                        type="number"
+                        value={formData.course_id}
+                        onChange={(e) =>
+                          handleInputChange("course_id", e.target.value)
+                        }
+                      />
+                    </div>
+                    <div>
+                      <DatePicker
+                        id="start-date"
+                        label="Start Date"
+                        placeholder="Select start date"
+                        defaultDate={formData.start_date}
+                        onChange={(d, val) =>
+                          handleInputChange("start_date", val)
+                        }
+                      />
+                    </div>
+                    <div>
+                      <DatePicker
+                        id="end-date"
+                        label="End Date"
+                        placeholder="Select end date"
+                        defaultDate={formData.end_date}
+                        onChange={(d, val) =>
+                          handleInputChange("end_date", val)
+                        }
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <MultiSelect
+                        label="Session Days"
+                        options={WEEKDAY_OPTIONS}
+                        defaultSelected={formData.session_days || []}
+                        onChange={(days) => setSelectedDays(days)}
+                      />
+                    </div>
+                    <div>
+                      <Label>Start Time</Label>
+                      <div className="relative">
+                        <Input
+                          type="time"
+                          value={formData.session_start_time}
+                          onChange={(e) =>
+                            handleInputChange(
+                              "session_start_time",
+                              e.target.value
+                            )
+                          }
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+                          <TimeIcon />
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <Label>End Time</Label>
+                      <div className="relative">
+                        <Input
+                          type="time"
+                          value={formData.session_end_time}
+                          onChange={(e) =>
+                            handleInputChange(
+                              "session_end_time",
+                              e.target.value
+                            )
+                          }
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400">
+                          <TimeIcon />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
 
-            <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={closeModal} size="sm">
-                Cancel
-              </Button>
-              <Button onClick={handleSave} size="sm">
-                Save Changes
-              </Button>
-            </div>
-          </form>
+                  <div className="flex justify-end gap-3">
+                    <Button variant="outline" onClick={closeModal} size="sm">
+                      Cancel
+                    </Button>
+                    <Button onClick={handleSave} size="sm">
+                      Save Changes
+                    </Button>
+                  </div>
+                </form>
+              </form>
+            </>
+          )}
         </div>
       </Modal>
     </div>
