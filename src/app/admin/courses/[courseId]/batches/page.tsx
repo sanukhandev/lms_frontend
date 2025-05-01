@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import ComponentCard from "@/components/common/ComponentCard";
 import { api } from "@/util/api";
 import BatchTable from "@/components/tables/BatchTable";
+import Preloader from "@/components/common/Preloader"; // Import Preloader
 
 type Batch = {
   id: number;
@@ -45,11 +46,11 @@ export default function Batches() {
       <ComponentCard
         title="Course Batches"
         buttonText="Add Batch"
-        buttonLink={`/admin/batches/create?courseId=${courseId}`}
+        buttonLink={`batches/create`}
         className="mb-6"
       >
         {loading ? (
-          <p>Loading...</p>
+          <Preloader /> // Use Preloader component while loading
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : batches.length === 0 ? (
