@@ -16,6 +16,10 @@ type Course = {
     id: number;
     name: string;
   };
+  category?: {
+    id: number;
+    name: string;
+  };
   syllabus?: string[];
   duration_weeks: number;
 };
@@ -61,15 +65,19 @@ export default function CourseTable({ items }: CourseTableProps) {
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                 >
-                  Description
+                  Category
                 </TableCell>
-
                 <TableCell
                   isHeader
-                
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                 >
-                  Batches
+                  Description
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  Actions
                 </TableCell>
               </TableRow>
             </TableHeader>
@@ -92,15 +100,24 @@ export default function CourseTable({ items }: CourseTableProps) {
                       {course.duration_weeks} weeks
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
+                      {course.category?.name || "Uncategorized"}
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
                       {course.description ? course.description.slice(0, 60) + "..." : "No description"}
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
-                      {/* {create button for creating batches page} */}
-                    <Link href={`/admin/courses/${course.id}/batches`}>
-                      <button className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-                        View Batches
-                      </button>
-                    </Link>
+                      <div className="flex space-x-2">
+                        <Link href={`/admin/courses/${course.id}/edit`}>
+                          <button className="text-green-500 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 mr-3">
+                            Edit
+                          </button>
+                        </Link>
+                        <Link href={`/admin/courses/${course.id}/batches`}>
+                          <button className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+                            View Batches
+                          </button>
+                        </Link>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
