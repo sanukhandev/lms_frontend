@@ -37,6 +37,7 @@ const navItems: NavItem[] = [
     name: "Courses",
     subItems: [
       { name: "Courses", path: "/admin/courses", pro: false },
+      { name: "Categories", path: "/admin/course-categories", pro: false },
       { name: "Add Course", path: "/admin/courses/create", pro: false },
     ],
   },
