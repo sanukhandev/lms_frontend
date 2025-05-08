@@ -12,6 +12,7 @@ import Preloader from "@/components/common/Preloader";
 
 // Define types for better type checking
 interface CourseForm {
+  id: string;
   title: string;
   description: string;
   instructor_id: string;
@@ -31,7 +32,7 @@ export default function EditCoursePage() {
   const router = useRouter();
   const params = useParams();
   const courseId = params.courseId as string;
-  
+
   const [courseLoading, setCourseLoading] = useState(true);
   const [courseError, setCourseError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -46,6 +47,7 @@ export default function EditCoursePage() {
     { value: string; label: string }[]
   >([]);
   const [form, setForm] = useState<CourseForm>({
+    id: "",
     title: "",
     description: "",
     instructor_id: "",
@@ -62,9 +64,10 @@ export default function EditCoursePage() {
     try {
       const response = await api.get(`/courses/${courseId}`);
       const course = response.data.data;
-      
+
       if (course) {
         setForm({
+          id: course.id.toString(),
           title: course.title || "",
           description: course.description || "",
           instructor_id: course.instructor?.id.toString() || "",
@@ -93,19 +96,19 @@ export default function EditCoursePage() {
   // Validate form
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    
+
     if (!form.title.trim()) {
       newErrors.title = "Title is required";
     }
-    
+
     if (!form.category_id) {
       newErrors.category_id = "Category is required";
     }
-    
+
     if (!form.duration_weeks || parseInt(form.duration_weeks) <= 0) {
       newErrors.duration_weeks = "Valid duration is required";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -113,11 +116,11 @@ export default function EditCoursePage() {
   // Handle form submit
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setSubmitting(true);
     try {
       await api.put(`/courses/${courseId}`, {
@@ -130,7 +133,7 @@ export default function EditCoursePage() {
       console.error("Error updating course:", err);
       setErrors({
         ...errors,
-        general: "Failed to update course. Please try again."
+        general: "Failed to update course. Please try again.",
       });
     } finally {
       setSubmitting(false);
@@ -152,7 +155,9 @@ export default function EditCoursePage() {
       setInstructors(instructorOptions);
     } catch (err) {
       console.error("Failed to fetch instructors", err);
-      setInstructorError("Failed to load instructors. Please refresh the page.");
+      setInstructorError(
+        "Failed to load instructors. Please refresh the page."
+      );
     } finally {
       setInstructorLoading(false);
     }
@@ -249,7 +254,9 @@ export default function EditCoursePage() {
                 <span>Loading categories...</span>
               </div>
             ) : categoryError ? (
-              <div className="text-red-500 text-sm mt-1 mb-2">{categoryError}</div>
+              <div className="text-red-500 text-sm mt-1 mb-2">
+                {categoryError}
+              </div>
             ) : (
               <>
                 <Select
@@ -265,7 +272,9 @@ export default function EditCoursePage() {
                   }}
                 />
                 {errors.category_id && (
-                  <p className="mt-1 text-xs text-error-500">{errors.category_id}</p>
+                  <p className="mt-1 text-xs text-error-500">
+                    {errors.category_id}
+                  </p>
                 )}
               </>
             )}
@@ -292,7 +301,9 @@ export default function EditCoursePage() {
                 <span>Loading instructors...</span>
               </div>
             ) : instructorError ? (
-              <div className="text-red-500 text-sm mt-1 mb-2">{instructorError}</div>
+              <div className="text-red-500 text-sm mt-1 mb-2">
+                {instructorError}
+              </div>
             ) : (
               <Select
                 placeholder="Select an instructor"
@@ -336,4 +347,3 @@ export default function EditCoursePage() {
     </div>
   );
 }
-
