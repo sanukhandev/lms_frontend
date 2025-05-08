@@ -9,7 +9,6 @@ import Input from "@/components/form/input/InputField";
 import Button from "@/components/ui/button/Button";
 import { api } from "@/util/api";
 import Preloader from "@/components/common/Preloader";
-import { CourseCategory } from "@/components/tables/CategoryTable";
 
 export default function EditCategoryPage() {
   const router = useRouter();
@@ -33,7 +32,7 @@ export default function EditCategoryPage() {
         setLoading(true);
         const response = await api.get(`/course-categories/${categoryId}`);
         const categoryData = response.data.data;
-        
+
         if (categoryData) {
           setForm({
             name: categoryData.name || "",
@@ -114,7 +113,6 @@ export default function EditCategoryPage() {
               placeholder="Category name"
               value={form.name}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -146,4 +144,3 @@ export default function EditCategoryPage() {
     </div>
   );
 }
-
