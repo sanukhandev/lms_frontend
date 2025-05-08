@@ -255,7 +255,7 @@ export default function EditCoursePage() {
                 <Select
                   placeholder="Select a category"
                   options={categories}
-                  value={form.category_id}
+                  defaultValue={form.category_id}
                   onChange={(value) => {
                     setForm({ ...form, category_id: value });
                     // Clear error when user selects a value
@@ -297,7 +297,7 @@ export default function EditCoursePage() {
               <Select
                 placeholder="Select an instructor"
                 options={instructors}
-                value={form.instructor_id}
+                defaultValue={form.instructor_id}
                 onChange={(value) => setForm({ ...form, instructor_id: value })}
               />
             )}
