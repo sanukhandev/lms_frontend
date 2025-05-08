@@ -4,17 +4,19 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { api } from "@/util/api";
 import ComponentCard from "@/components/common/ComponentCard";
-import StudentTable from "@/components/ecommerce/StudentsTable";
 import BatchInfoCard from "@/components/user-profile/BatchCardInfo";
 import Button from "@/components/ui/button/Button";
 import { Modal } from "@/components/ui/modal";
 import MultiSelect from "@/components/form/MultiSelect";
 import Preloader from "@/components/common/Preloader"; // Import Preloader for smooth loading UI
+import StudentTable from "@/components/tables/StudentTable";
 
 interface Student {
   id: number;
   name: string;
   email: string;
+  phone?: string;
+  secondry_phone?: string;
   created_at: string;
 }
 
@@ -190,7 +192,7 @@ export default function BatchDetailsPage() {
         onModalOpen={handleOpenAddStudentModal}
       >
         {batch.students.length > 0 ? (
-          <StudentTable students={batch.students} />
+          <StudentTable items={batch.students} />
         ) : (
           <p>No students assigned.</p>
         )}
