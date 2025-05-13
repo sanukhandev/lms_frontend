@@ -47,12 +47,7 @@ export default function TodaysClassesTable({ items }: TodaysClassesTableProps) {
             {/* Table Header */}
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-                <TableCell
-                  isHeader
-                  className="px-5 py-3 text-start font-medium text-gray-500 text-theme-xs dark:text-gray-400"
-                >
-                  Class ID
-                </TableCell>
+               
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start font-medium text-gray-500 text-theme-xs dark:text-gray-400"
@@ -109,9 +104,7 @@ export default function TodaysClassesTable({ items }: TodaysClassesTableProps) {
               {items.length > 0 ? (
                 items.map((session) => (
                   <TableRow key={session.id}>
-                    <TableCell className="px-5 py-4 text-start font-medium text-gray-800 dark:text-white/90">
-                      {session.id}
-                    </TableCell>
+                   
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
                       {session.date}
                     </TableCell>
