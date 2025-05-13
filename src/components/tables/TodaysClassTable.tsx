@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import Button from "../ui/button/Button";
 
 type ClassSession = {
   id: number;
@@ -39,6 +40,19 @@ interface TodaysClassesTableProps {
 }
 
 export default function TodaysClassesTable({ items }: TodaysClassesTableProps) {
+  const handleOpenManageClassModal = (session: ClassSession) => {
+    // Logic to open the modal and pass the session data
+    console.log("Open manage class modal for session:", session);
+    // You can implement your modal logic here
+  };
+  const handleJoinMeeting = (sessionId: number) => {
+    const meetingUrl = `/meeting/${sessionId}`;
+    window.open(
+      meetingUrl,
+      "_blank",
+      "toolbar=no,scrollbars=no,resizable=no,top=100,left=100,width=800,height=600"
+    );
+  };
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
@@ -47,7 +61,6 @@ export default function TodaysClassesTable({ items }: TodaysClassesTableProps) {
             {/* Table Header */}
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-               
                 <TableCell
                   isHeader
                   className="px-5 py-3 text-start font-medium text-gray-500 text-theme-xs dark:text-gray-400"
@@ -104,7 +117,6 @@ export default function TodaysClassesTable({ items }: TodaysClassesTableProps) {
               {items.length > 0 ? (
                 items.map((session) => (
                   <TableRow key={session.id}>
-                   
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
                       {session.date}
                     </TableCell>
@@ -127,17 +139,24 @@ export default function TodaysClassesTable({ items }: TodaysClassesTableProps) {
                       {session.class_status.replace("_", " ")}
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-blue-600 dark:text-blue-400">
-                      {session.meeting_link ? (
-                        <a
-                          href={session.meeting_link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline"
+                      {session.meeting_link &&
+                      session.class_status === "not_started" ? (
+                        <Button
+                          variant="outline"
+                          onClick={() => handleJoinMeeting(session.id)}
+                          className="text-blue-500 hover:underline"
                         >
-                          Join
-                        </a>
+                          Join Class
+                        </Button>
+                      ) : session.class_status === "completed" ? (
+                        <span className="text-gray-500">Class Ended</span>
                       ) : (
-                        "Not Available"
+                        <Button
+                          onClick={() => handleOpenManageClassModal(session)}
+                          className="text-blue-500 hover:underline"
+                        >
+                          Manage Class
+                        </Button>
                       )}
                     </TableCell>
                   </TableRow>

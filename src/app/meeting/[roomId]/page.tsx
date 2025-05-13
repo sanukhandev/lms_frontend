@@ -97,7 +97,7 @@ const MeetingPage = () => {
         setLoading(false);
         setTimeout(() => {
           // closeThetab
-          // window.close(); // Close the tab after 2 seconds
+          window.close(); // Close the tab after 2 seconds
         }, 2000); // Delay for 2 seconds before redirecting// End loading
       }
     };

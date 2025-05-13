@@ -376,7 +376,7 @@ export default function BatchDetailsPage() {
                   </span>
                 </td>
                 <td className="p-2">
-                  {session.meeting_link &&
+                {session.meeting_link &&
                   session.class_status === "not_started" ? (
                     <Button
                       variant="outline"
