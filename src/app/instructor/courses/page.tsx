@@ -44,7 +44,7 @@ export default function Courses() {
       <ComponentCard
         title="Courses Table"
         buttonText="Add Course"
-        buttonLink="/admin/courses/create" // Fixed the extra space in the URL
+        buttonLink="/instructor/courses/create" // Fixed the extra space in the URL
         className="mb-6"
       >
         {loading ? (
@@ -52,7 +52,7 @@ export default function Courses() {
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
-          <CourseTable items={courses} route="admin" />
+          <CourseTable items={courses} route="instructor" />
         )}
       </ComponentCard>
     </div>

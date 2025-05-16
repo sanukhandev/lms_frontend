@@ -24,42 +24,33 @@ const navItems: NavItem[] = [
     name: "Dashboard",
     path: "/instructor",
   },
+  // {
+  //   icon: <CalenderIcon />,
+  //   name: "Instructors",
+  //   subItems: [
+  //     { name: "Instructors", path: "/instructor/instructors", pro: false },
+  //     { name: "Add Instructor", path: "/admin/instructors/create", pro: false },
+  //   ],
+  // },
   {
     icon: <CalenderIcon />,
-    name: "My Courses",
+    name: "Courses",
     subItems: [
-      { name: "All Courses", path: "/instructor/courses", pro: false },
-      { name: "Course Materials", path: "/instructor/courses/materials", pro: false },
+      { name: "Courses", path: "/instructor/courses", pro: false },
+      { name: "Categories", path: "/instructor/course-categories", pro: false },
+      { name: "Add Course", path: "/instructor/courses/create", pro: false },
     ],
   },
-  {
-    icon: <CalenderIcon />,
-    name: "My Batches",
-    subItems: [
-      { name: "Active Batches", path: "/instructor/batches", pro: false },
-      { name: "Batch Schedule", path: "/instructor/batches/schedule", pro: false },
-    ],
-  },
-  {
-    icon: <CalenderIcon />,
-    name: "Schedule",
-    path: "/instructor/schedule",
-  },
+
   {
     icon: <CalenderIcon />,
     name: "Students",
     subItems: [
-      { name: "My Students", path: "/instructor/students", pro: false },
-      { name: "Student Progress", path: "/instructor/students/progress", pro: false },
+      { name: "Students", path: "/instructor/students", pro: false },
+      { name: "Add Student", path: "/instructor/students/create", pro: false },
     ],
   },
-  {
-    icon: <CalenderIcon />,
-    name: "Reports",
-    path: "/instructor/reports",
-  },
 ];
-
 const othersItems: NavItem[] = [];
 
 const InstructorSideBar: React.FC = () => {
@@ -330,4 +321,3 @@ const InstructorSideBar: React.FC = () => {
 };
 
 export default InstructorSideBar;
-

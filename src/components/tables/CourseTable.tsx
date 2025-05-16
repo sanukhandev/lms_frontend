@@ -26,9 +26,10 @@ type Course = {
 
 interface CourseTableProps {
   items: Course[];
+  route: string;
 }
 
-export default function CourseTable({ items }: CourseTableProps) {
+export default function CourseTable({ items, route }: CourseTableProps) {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
@@ -37,7 +38,7 @@ export default function CourseTable({ items }: CourseTableProps) {
             {/* Table Header */}
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-                 <TableCell
+                <TableCell
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                 >
@@ -103,16 +104,18 @@ export default function CourseTable({ items }: CourseTableProps) {
                       {course.category?.name || "Uncategorized"}
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
-                      {course.description ? course.description.slice(0, 60) + "..." : "No description"}
+                      {course.description
+                        ? course.description.slice(0, 60) + "..."
+                        : "No description"}
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start text-gray-600 dark:text-gray-400">
                       <div className="flex space-x-2">
-                        <Link href={`/admin/courses/${course.id}/edit`}>
+                        <Link href={`/${route}/courses/${course.id}/edit`}>
                           <button className="text-green-500 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 mr-3">
                             Edit
                           </button>
                         </Link>
-                        <Link href={`/admin/courses/${course.id}/batches`}>
+                        <Link href={`/${route}/courses/${course.id}/batches`}>
                           <button className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
                             View Batches
                           </button>
@@ -123,9 +126,7 @@ export default function CourseTable({ items }: CourseTableProps) {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell
-                    className="py-6 text-center text-gray-500 dark:text-gray-400"
-                  >
+                  <TableCell className="py-6 text-center text-gray-500 dark:text-gray-400">
                     No courses found.
                   </TableCell>
                 </TableRow>

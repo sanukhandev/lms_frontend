@@ -56,7 +56,7 @@ export default function Batches() {
         ) : batches.length === 0 ? (
           <p className="text-gray-500">No batches found for this course.</p>
         ) : (
-          <BatchTable items={batches} route="admin" />
+          <BatchTable items={batches} route="instructor" />
         )}
       </ComponentCard>
     </div>

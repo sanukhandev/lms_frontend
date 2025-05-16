@@ -21,9 +21,10 @@ type Batch = {
 
 interface BatchTableProps {
   items: Batch[];
+  route: string;
 }
 
-export default function BatchTable({ items }: BatchTableProps) {
+export default function BatchTable({ items, route }: BatchTableProps) {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
@@ -81,7 +82,7 @@ export default function BatchTable({ items }: BatchTableProps) {
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start font-medium text-gray-800 dark:text-white/90">
                       <Link
-                        href={`/admin/courses/${batch.course_id}/batches/${batch.id}`}
+                        href={`/${route}/courses/${batch.course_id}/batches/${batch.id}`}
                         className="text-blue-500 hover:underline"
                       >
                         {batch.name}
